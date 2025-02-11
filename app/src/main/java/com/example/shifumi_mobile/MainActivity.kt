@@ -56,18 +56,19 @@ fun HomeScreen(
     navController: NavHostController,
     ){
     Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+        .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     )   {
+        Spacer(modifier = Modifier.height(200.dp))
         Text(
             text ="Shifumi",
             fontSize = 48.sp,
-            modifier = Modifier.padding(150.dp)
+            modifier = Modifier.padding(10.dp)
                 .wrapContentWidth(),
+
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(300.dp))
 
         Button(onClick = {
             navController.navigate("playDisplay")
