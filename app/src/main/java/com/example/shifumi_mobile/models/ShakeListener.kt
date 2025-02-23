@@ -29,7 +29,7 @@ class ShakeListener(private val onShake: () -> Unit) : SensorEventListener {
     }
 
     companion object {
-        private const val SHAKE_THRESHOLD = 4.0f  // Shake Sensitivity
+        private const val SHAKE_THRESHOLD = 10.0f  // Shake Sensitivity
         private const val SHAKE_TIME_LAPSE = 300  // It avoids multiple rapid shakes
     }
 }

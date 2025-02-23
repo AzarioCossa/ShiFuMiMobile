@@ -130,7 +130,6 @@ fun PlayDisplay(navController: NavHostController, isShaken: MutableState<Boolean
                 shakeTimes++
             }
 
-            gameController.addShake()
             result = "Sécouez le portable pour jouer"
             //reset value
             isShaken.value = false
