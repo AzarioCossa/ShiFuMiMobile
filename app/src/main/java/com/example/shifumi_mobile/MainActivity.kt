@@ -1,11 +1,14 @@
 package com.example.shifumi_mobile
 
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +39,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shifumi_mobile.controllers.GameController
 import com.example.shifumi_mobile.models.ShakeListener
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButtonDefaults.containerColor
 
 class MainActivity : ComponentActivity() {
     private lateinit var sensorManager: SensorManager
@@ -49,7 +57,7 @@ class MainActivity : ComponentActivity() {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         shakeListener = ShakeListener {
-            isShaken.value = tru
+            isShaken.value = true
         }
 
         setContent {
@@ -81,18 +89,23 @@ fun AppNavigation(isShaken: MutableState<Boolean>) {
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
+    ImageBackground(alphaValue = 1f)
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(26.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(200.dp))
         Text(
             text = "Shifumi",
             fontSize = 48.sp,
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(10.dp),
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(300.dp))
-        Button(onClick = { navController.navigate("playDisplay") }) {
+        Button(onClick = { navController.navigate("playDisplay") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF3C102))) {
             Text(text = "Jouer")
         }
     }
@@ -112,11 +125,18 @@ fun PlayDisplay(navController: NavHostController, isShaken: MutableState<Boolean
         }
     }
 
+    ImageBackground(alphaValue = 0.5f)
+
     Column(
         modifier = Modifier.fillMaxSize().padding(26.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Button(onClick = { navController.navigate("home") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF3C102))) {
+            Text(text = "Revenir à l'accueil")
+        }
+
         Text(
             text = if (result.isNotEmpty()) result else "Sécouez le portable pour commencer",
             fontSize = 30.sp,
@@ -124,4 +144,15 @@ fun PlayDisplay(navController: NavHostController, isShaken: MutableState<Boolean
             color = Color.Red
         )
     }
+}
+
+@Composable
+fun ImageBackground(alphaValue: Float) {
+    Image(
+        painter = painterResource(id = R.drawable.bg_image), // Substitua com o ID do recurso da sua imagem
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize()
+            .alpha(alphaValue),
+        contentScale = ContentScale.Crop
+    )
 }
