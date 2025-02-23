@@ -10,11 +10,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +54,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Inicializa sensor e listener corretamente
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
@@ -114,13 +115,24 @@ fun HomeScreen(navController: NavHostController) {
 @Composable
 fun PlayDisplay(navController: NavHostController, isShaken: MutableState<Boolean>) {
     var result by remember { mutableStateOf("") }
+    var imageResId by remember { mutableStateOf(R.drawable.sun) }
+    val gameController = GameController()
+    var newImageResId : Int
+    var shakeTimes by remember { mutableStateOf(0) }
 
     LaunchedEffect(isShaken.value) {
         if (isShaken.value) {
-            val gameController = GameController()
-            result = gameController.playGame()
+            if (shakeTimes == 3) {
+                newImageResId = gameController.playGame()
+                imageResId = newImageResId
+                shakeTimes=0
+            }else{
+                shakeTimes++
+            }
 
-            // Value reset
+            gameController.addShake()
+            result = "Sécouez le portable pour jouer"
+            //reset value
             isShaken.value = false
         }
     }
@@ -128,28 +140,42 @@ fun PlayDisplay(navController: NavHostController, isShaken: MutableState<Boolean
     ImageBackground(alphaValue = 0.5f)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(26.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(26.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { navController.navigate("home") },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF3C102))) {
+        Button(
+            onClick = { navController.navigate("home") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF3C102)),
+            modifier = Modifier.padding(10.dp)
+        ) {
             Text(text = "Revenir à l'accueil")
         }
 
         Text(
-            text = if (result.isNotEmpty()) result else "Sécouez le portable pour commencer",
-            fontSize = 30.sp,
+            text = if (result.isNotEmpty()) result else "Secouez le portable pour commencer",
+            fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Red
+            color = Color.Black
         )
+
+        Box(modifier = Modifier.size(200.dp)) {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = null,
+                modifier = Modifier.size(200.dp)
+            )
+        }
     }
 }
+
 
 @Composable
 fun ImageBackground(alphaValue: Float) {
     Image(
-        painter = painterResource(id = R.drawable.bg_image), // Substitua com o ID do recurso da sua imagem
+        painter = painterResource(id = R.drawable.bg_image),
         contentDescription = null,
         modifier = Modifier.fillMaxSize()
             .alpha(alphaValue),
