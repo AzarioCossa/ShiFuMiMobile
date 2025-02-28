@@ -1,18 +1,26 @@
 package com.example.shifumi_mobile.controllers
+
 import com.example.shifumi_mobile.R
+import kotlin.random.Random
 
 class GameController {
-    val computerChoice = listOf(
-        R.drawable.rock,
-        R.drawable.paper,
-        R.drawable.scisors)
+    private var lastResult: String = ""
 
     fun playGame(): Int {
-        return gameResult()
+        val choices = listOf("Pierre", "Papier", "Ciseaux")
+        val choice = choices.random()
+
+        lastResult = "L'ordinateur a choisi: $choice"
+
+        return when (choice) {
+            "Pierre" -> R.drawable.rock
+            "Papier" -> R.drawable.paper
+            "Ciseaux" -> R.drawable.scisors
+            else -> R.drawable.sun
+        }
     }
 
-
-    fun gameResult(): Int {
-        return computerChoice.random()
+    fun getLastResult(): String {
+        return lastResult
     }
 }
