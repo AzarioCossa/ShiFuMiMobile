@@ -1,6 +1,8 @@
 package com.example.shifumi_mobile
 
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -8,24 +10,47 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.navigation.compose.*
 import com.example.shifumi_mobile.bluetooth.BluetoothManager
+import com.example.shifumi_mobile.models.ShakeListener
 import com.example.shifumi_mobile.ui.HomeScreen
 import com.example.shifumi_mobile.ui.PlayScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var bluetoothManager: BluetoothManager
+    private lateinit var sensorManager: SensorManager
+    private var accelerometer: Sensor? = null
+    private lateinit var shakeListener: ShakeListener
+    private val isShaken = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         bluetoothManager = BluetoothManager(this)
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         if (bluetoothManager.checkPermissions(this)) {
             bluetoothManager.enableBluetooth(this)
         }
 
-        setContent {
-            AppNavigation()
+        shakeListener = ShakeListener {
+            isShaken.value = true
         }
+
+        setContent {
+            AppNavigation(isShaken)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        accelerometer?.let {
+            sensorManager.registerListener(shakeListener, it, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(shakeListener)
     }
 
     override fun onRequestPermissionsResult(
@@ -46,9 +71,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(isShaken: MutableState<Boolean>) {
     val navController = rememberNavController()
-    val isShaken = remember { mutableStateOf(false) }
 
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
