@@ -4,9 +4,11 @@ import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
 import androidx.navigation.compose.*
 import com.example.shifumi_mobile.bluetooth.BluetoothManager
@@ -23,6 +25,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         bluetoothManager = BluetoothManager(this)
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
