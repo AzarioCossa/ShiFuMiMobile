@@ -6,21 +6,29 @@ import kotlin.random.Random
 class GameController {
     private var lastResult: String = ""
 
-    fun playGame(): Int {
+    fun playGame(): List<Int> {
         val choices = listOf("Pierre", "Papier", "Ciseaux")
-        val choice = choices.random()
+        val playerChoice = choices.random()
+        val computerChoice = choices.random()
 
-        lastResult = "L'ordinateur a choisi: $choice"
+        
+        lastResult = "L'ordinateur a choisi: $computerChoice"
 
-        return when (choice) {
-            "Pierre" -> R.drawable.rock
-            "Papier" -> R.drawable.paper
-            "Ciseaux" -> R.drawable.scisors
-            else -> R.drawable.sun
+
+        fun getImage(choice: String): Int {
+            return when (choice) {
+                "Pierre" -> R.drawable.rock
+                "Papier" -> R.drawable.paper
+                "Ciseaux" -> R.drawable.scisors
+                else -> R.drawable.sun
+            }
         }
+
+        return listOf(getImage(playerChoice), getImage(computerChoice))
     }
 
     fun getLastResult(): String {
         return lastResult
     }
 }
+

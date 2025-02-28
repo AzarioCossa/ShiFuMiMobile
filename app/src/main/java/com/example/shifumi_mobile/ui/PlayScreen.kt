@@ -13,21 +13,36 @@ import androidx.navigation.NavHostController
 import com.example.shifumi_mobile.controllers.GameController
 import com.example.shifumi_mobile.R
 
+
 @Composable
 fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>) {
     var result by remember { mutableStateOf("") }
-    var imageResId by remember { mutableStateOf(R.drawable.sun) }
+    var playerImageResId by remember { mutableStateOf(R.drawable.sun) }
+    var computerImageResId by remember { mutableStateOf(R.drawable.sun) }
     val gameController = GameController()
 
     LaunchedEffect(isShaken.value) {
         if (isShaken.value) {
-            imageResId = gameController.playGame()
+            val images = gameController.playGame() // Récupère les 2 images (joueur + ordinateur)
+            playerImageResId = images[0] // Image du joueur
+            computerImageResId = images[1] // Image de l'ordinateur
+
             result = "Résultat: ${gameController.getLastResult()}"
             isShaken.value = false
         }
     }
 
     ImageBackground(0.5f)
+
+    Button(
+        onClick = { navController.navigate("home") },
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        modifier = Modifier
+            .padding(10.dp)
+            .padding(top = 26.dp),
+    ) {
+        Text(text = "Retour à l'accueil")
+    }
 
     Column(
         modifier = Modifier
@@ -36,12 +51,23 @@ fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(
-            onClick = { navController.navigate("home") },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.padding(10.dp)
+
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 40.dp)
         ) {
-            Text(text = "Retour à l'accueil")
+            Text(
+                text = "Ordinateur",
+                fontSize = 25.sp
+            )
+            Box(modifier = Modifier.size(200.dp)) {
+                Image(
+                    painter = painterResource(id = computerImageResId),
+                    contentDescription = "Choix de l'ordinateur",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
         }
 
         Text(
@@ -49,12 +75,22 @@ fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>
             fontSize = 18.sp
         )
 
-        Box(modifier = Modifier.size(200.dp)) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = null,
-                modifier = Modifier.size(200.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 40.dp)
+        ) {
+            Text(
+                text = "Vous",
+                fontSize = 25.sp
             )
+            Box(modifier = Modifier.size(200.dp)) {
+                Image(
+                    painter = painterResource(id = playerImageResId),
+                    contentDescription = "Votre choix",
+                    modifier = Modifier.size(200.dp)
+                )
+            }
         }
     }
 }
+
