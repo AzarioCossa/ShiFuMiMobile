@@ -29,7 +29,7 @@ fun HomeScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-            onClick = { navController.navigate("play") },
+            onClick = { navController.navigate("gameMode") },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             Text(text = "Jouer")

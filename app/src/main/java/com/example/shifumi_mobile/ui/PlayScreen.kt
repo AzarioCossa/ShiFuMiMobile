@@ -1,5 +1,6 @@
 package com.example.shifumi_mobile.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,20 +13,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.shifumi_mobile.controllers.GameController
 import com.example.shifumi_mobile.R
+import kotlinx.coroutines.delay
 
 @Composable
-fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>) {
+fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>, route: String) {
     var result by remember { mutableStateOf("") }
     var playerImageResId by remember { mutableStateOf(R.drawable.sun) }
     var computerImageResId by remember { mutableStateOf(R.drawable.sun) }
-    val gameController = GameController()
+    val isStrategicMode = route == "PlayStrategie"
 
     LaunchedEffect(isShaken.value) {
         if (isShaken.value) {
-            val (playerImage, computerImage, winnerMessage) = gameController.playGame()
+            val (playerImage, computerImage, winnerMessage) = GameController.playGame(isStrategicMode)
             playerImageResId = playerImage
             computerImageResId = computerImage
             result = winnerMessage
+
+            // Ajoute un léger délai avant de désactiver `isShaken` pour éviter les déclenchements multiples
+            delay(500)
             isShaken.value = false
         }
     }
@@ -47,7 +52,7 @@ fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>
             Text(text = "Retour à l'accueil")
         }
 
-        //Choix ordinateur
+        // Choix ordinateur
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(bottom = 40.dp)
@@ -60,14 +65,14 @@ fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>
             )
         }
 
-        //Resultat
+        // Résultat
         Text(
             text = result.ifEmpty { "Secouez le portable pour jouer" },
             fontSize = 22.sp,
             modifier = Modifier.padding(vertical = 20.dp)
         )
 
-        //Choix du joueur
+        // Choix du joueur
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
