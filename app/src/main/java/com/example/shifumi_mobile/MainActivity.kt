@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.*
 import com.example.shifumi_mobile.bluetooth.BluetoothManager
 import com.example.shifumi_mobile.models.ShakeListener
+import com.example.shifumi_mobile.ui.GameMode
 import com.example.shifumi_mobile.ui.HomeScreen
 import com.example.shifumi_mobile.ui.PlayScreen
 
@@ -79,6 +80,8 @@ fun AppNavigation(isShaken: MutableState<Boolean>) {
 
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("play") { PlayScreen(navController, isShaken) }
+        composable("gameMode") { GameMode(navController) }
+        composable("PlayClassique") { PlayScreen(navController, isShaken, "PlayClassique") }
+        composable("PlayStrategie"){ PlayScreen(navController, isShaken, "PlayStrategie") }
     }
 }
