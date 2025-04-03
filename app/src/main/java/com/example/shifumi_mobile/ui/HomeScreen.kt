@@ -1,6 +1,7 @@
 package com.example.shifumi_mobile.ui
 
 import com.example.shifumi_mobile.ui.ImageBackground
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -33,6 +34,13 @@ fun HomeScreen(navController: NavHostController) {
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             Text(text = "Jouer")
+        }
+
+        Button(
+            onClick = { navController.navigate("wifi") },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        ) {
+            Text(text = "WiFi")
         }
     }
 }
