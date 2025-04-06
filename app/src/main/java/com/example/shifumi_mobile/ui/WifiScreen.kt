@@ -1,56 +1,87 @@
 package com.example.shifumi_mobile.ui
 
-import android.net.wifi.p2p.WifiP2pDevice
-import android.net.wifi.p2p.WifiP2pManager
-import androidx.compose.foundation.clickable
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.shifumi_mobile.wifi.WifiManager
 
 @Composable
 fun WifiScreen(wifiManager: WifiManager) {
-    val devices = remember { mutableStateListOf<WifiP2pDevice>() }
-    val isLoading = remember { mutableStateOf(true) }
+    val messages = remember { mutableStateListOf<String>() }
+    var messageText by remember { mutableStateOf(TextFieldValue("")) }
+    wifiManager.checkConnectionInfo()
 
-    // Criar o listener para receber os dispositivos encontrados
-    val peerListListener = remember {
-        WifiP2pManager.PeerListListener { peerList ->
-            devices.clear()
-            devices.addAll(peerList.deviceList)
-            isLoading.value = false // Stop loading after fetching peers
+    // Callback que será chamado ao receber uma nova mensagem
+    LaunchedEffect(Unit) {
+        wifiManager.onMessageReceived = { receivedMessage ->
+            messages.add("Autre: $receivedMessage")
         }
     }
 
-    // Descobrir dispositivos ao abrir a tela
-    LaunchedEffect(Unit) {
-        wifiManager.startPeerDiscovery()
+    // Função para enviar mensagem
+    fun sendMessage() {
+        val message = messageText.text
+        if (/*wifiManager.outputStream != null &&*/ message.isNotBlank()) {
+            wifiManager.sendData(message)
+            messages.add("Você: $message")
+            messageText = TextFieldValue("")
+        } else {
+            Log.e("WifiScreen", "Não foi possível enviar a mensagem: Conexão não estabelecida")
+            messages.add("Erro: Conexão não estabelecida")
+
+        }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("📡 Dispositivos Encontrados:", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(8.dp))
+    // Layout da tela de chat
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("💬 Chat", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Show loading spinner while discovering peers
-        if (isLoading.value) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else {
-            // Show devices found
-            if (devices.isEmpty()) {
-                Text("Nenhum dispositivo encontrado", style = MaterialTheme.typography.bodyLarge)
-            } else {
-                devices.forEach { device ->
-                    Text(
-                        text = "📶 ${device.deviceName}",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable { wifiManager.connectToDevice(device) }
-                    )
-                }
+        // Área de exibição das mensagens
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            messages.forEach { message ->
+                Text(text = message, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+        }
+
+        // Caixa de entrada e botão de envio
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = messageText,
+                onValueChange = { messageText = it },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(16.dp),
+                textStyle = MaterialTheme.typography.bodyLarge
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(onClick = { sendMessage() }) {
+                Text("Enviar")
             }
         }
     }

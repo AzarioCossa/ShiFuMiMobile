@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
+        wifiManager.closeConnection()
         sensorManager.unregisterListener(shakeListener)
     }
 }
