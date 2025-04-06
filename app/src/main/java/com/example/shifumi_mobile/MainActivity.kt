@@ -1,5 +1,6 @@
 package com.example.shifumi_mobile
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -10,11 +11,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.*
 import com.example.shifumi_mobile.bluetooth.BluetoothManager
 import com.example.shifumi_mobile.models.ShakeListener
+import com.example.shifumi_mobile.ui.GameMode
 import com.example.shifumi_mobile.ui.HomeScreen
 import com.example.shifumi_mobile.ui.PlayScreen
+import com.example.shifumi_mobile.ui.getPlayerName
+import com.example.shifumi_mobile.ui.showScores
 
 class MainActivity : ComponentActivity() {
     private lateinit var bluetoothManager: BluetoothManager
@@ -74,11 +79,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(isShaken: MutableState<Boolean>) {
+fun AppNavigation(isShaken: MutableState<Boolean>, context: Context = LocalContext.current) {
     val navController = rememberNavController()
+    var playerName by remember { mutableStateOf("") }
 
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("play") { PlayScreen(navController, isShaken) }
+        composable("getPlayerName") { getPlayerName(navController) { name -> playerName = name }}
+        composable("gameMode") { GameMode(navController, playerName) }
+        composable("PlayClassique") { PlayScreen(navController, isShaken, "PlayClassique", playerName, context) }
+        composable("PlayStrategie"){ PlayScreen(navController, isShaken, "PlayStrategie", playerName, context) }
+        composable("scores") { showScores(navController, context) }
     }
 }
