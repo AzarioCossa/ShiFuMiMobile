@@ -4,6 +4,8 @@ import android.content.Context
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileInputStream
+import android.os.Vibrator
+import android.os.VibrationEffect
 
 class ScoresController {
     fun saveScores(context: Context, player: String, newScore: Int) {
@@ -22,17 +24,32 @@ class ScoresController {
                 val parts = line.split(": ")
                 if (parts[0] == player) {
                     val currentScore = parts[1].toIntOrNull() ?: 0
-                    "${parts[0]}: ${currentScore + newScore}"
+                    val newTotalScore = currentScore + newScore
+                    if (newTotalScore % 5 == 0) {
+                        vibrate(context)
+                    }
+                    "${parts[0]}: $newTotalScore"
                 } else {
                     line
                 }
             }.joinToString("\n")
         } else {
+            if (newScore % 5 == 0) {
+                vibrate(context)
+            }
             scores + "\n$player: $newScore"
         }
 
         FileOutputStream(file).use { output ->
             output.write(updatedScores.toByteArray())
+        }
+    }
+
+    private fun vibrate(context: Context) {
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) {
+            val vibrationEffect = VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE)
+            vibrator.vibrate(vibrationEffect)
         }
     }
 
