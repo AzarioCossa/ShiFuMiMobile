@@ -14,6 +14,7 @@ import com.example.shifumi_mobile.wifi.WifiManager
 
 @Composable
 fun WifiScreen(wifiManager: WifiManager) {
+    ImageBackground(0.5f)
     val messages = remember { mutableStateListOf<String>() }
     var messageText by remember { mutableStateOf(TextFieldValue("")) }
     wifiManager.checkConnectionInfo()
