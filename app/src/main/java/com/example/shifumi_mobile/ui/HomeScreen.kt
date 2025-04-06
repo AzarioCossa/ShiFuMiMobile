@@ -2,6 +2,7 @@ package com.example.shifumi_mobile.ui
 
 import android.content.Context
 import com.example.shifumi_mobile.ui.ImageBackground
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ fun HomeScreen(navController: NavHostController) {
     ) {
         Text(
             text = "Shifumi!",
-            fontSize = 24.sp
+            fontSize = 34.sp
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -40,6 +41,14 @@ fun HomeScreen(navController: NavHostController) {
         ) {
             Text(text = "Jouer")
         }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = { navController.navigate("wifi") },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        ) {
+            Text(text = "WiFi")
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -49,12 +58,15 @@ fun HomeScreen(navController: NavHostController) {
         ) {
             Text(text = "Scores")
         }
+
+
     }
 }
 
 @Composable
 fun getPlayerName(navController: NavHostController, onNameEntered: (String) -> Unit){
     var playerName by remember { mutableStateOf("") }
+    ImageBackground(.5f)
 
     Column(
         modifier = Modifier
@@ -94,9 +106,9 @@ fun getPlayerName(navController: NavHostController, onNameEntered: (String) -> U
 
 @Composable
 fun showScores(navController: NavHostController, context: Context) {
+    ImageBackground(.5f)
     val scoresController = ScoresController()
     val scores = scoresController.readScores(context).toList().sortedByDescending { (_, score) -> score }
-
 
     Column(
         modifier = Modifier
