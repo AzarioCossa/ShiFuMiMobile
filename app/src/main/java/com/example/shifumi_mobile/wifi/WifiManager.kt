@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class WifiManager(private val context: Context) {
-    private var socket: Socket? = null
+    public var socket: Socket? = null
     private var serverSocket: ServerSocket? = null
     public var outputStream: OutputStream? = null
     private var inputStream: BufferedReader? = null

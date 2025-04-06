@@ -66,6 +66,7 @@ fun HomeScreen(navController: NavHostController) {
 @Composable
 fun getPlayerName(navController: NavHostController, onNameEntered: (String) -> Unit){
     var playerName by remember { mutableStateOf("") }
+    ImageBackground(.5f)
 
     Column(
         modifier = Modifier
@@ -105,9 +106,9 @@ fun getPlayerName(navController: NavHostController, onNameEntered: (String) -> U
 
 @Composable
 fun showScores(navController: NavHostController, context: Context) {
+    ImageBackground(.5f)
     val scoresController = ScoresController()
     val scores = scoresController.readScores(context).toList().sortedByDescending { (_, score) -> score }
-
 
     Column(
         modifier = Modifier

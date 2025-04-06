@@ -30,11 +30,11 @@ fun WifiScreen(wifiManager: WifiManager) {
         val message = messageText.text
         if (/*wifiManager.outputStream != null &&*/ message.isNotBlank()) {
             wifiManager.sendData(message)
-            messages.add("Você: $message")
+            messages.add("YOU: $message")
             messageText = TextFieldValue("")
         } else {
-            Log.e("WifiScreen", "Não foi possível enviar a mensagem: Conexão não estabelecida")
-            messages.add("Erro: Conexão não estabelecida")
+            Log.e("WifiScreen", "It wasn't possible to send the message: Connection not established")
+            messages.add("Error: No connection established")
 
         }
     }
@@ -46,6 +46,11 @@ fun WifiScreen(wifiManager: WifiManager) {
             .padding(16.dp)
     ) {
         Text("💬 Chat", style = MaterialTheme.typography.headlineMedium)
+        if (wifiManager.socket != null) {
+            Text("Connected to: ${wifiManager.socket!!.inetAddress.hostAddress}", style = MaterialTheme.typography.bodyMedium)
+        } else {
+            Text("No connection established", style = MaterialTheme.typography.bodyMedium)
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Área de exibição das mensagens
