@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun GameMode(navController: NavHostController) {
+fun GameMode(navController: NavHostController, playerName : String) {
     ImageBackground(1f)
 
     Column(

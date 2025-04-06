@@ -1,9 +1,22 @@
 package com.example.shifumi_mobile.controllers
 
+import android.content.Context
 import com.example.shifumi_mobile.R
 import kotlin.random.Random
 object GameController {
     private var lastPlayerChoice: String? = null
+    private lateinit var scoresController: ScoresController
+    private lateinit var player : String
+    private lateinit var context: Context
+
+    fun initialize(context: Context) {
+        scoresController = ScoresController()
+        this.context = context
+    }
+
+    fun setPlayerName(name: String) {
+        player = name
+    }
 
     fun playGame(isStrategic: Boolean): Triple<Int, Int, String> {
         val choices = listOf("Pierre", "Papier", "Ciseaux")
@@ -16,6 +29,9 @@ object GameController {
         }
 
         val winnerMessage = determineWinner(playerChoice, computerChoice)
+
+        val playerScore = if (winnerMessage == "Vous avez gagné !") 1 else 0
+        scoresController.saveScores(context, player, playerScore)
 
         fun getImage(choice: String): Int {
             return when (choice) {

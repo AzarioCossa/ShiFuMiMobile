@@ -1,5 +1,6 @@
 package com.example.shifumi_mobile.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,7 @@ import com.example.shifumi_mobile.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>, route: String) {
+fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>, route: String, playerName: String, context: Context) {
     var result by remember { mutableStateOf("") }
     var playerImageResId by remember { mutableStateOf(R.drawable.sun) }
     var computerImageResId by remember { mutableStateOf(R.drawable.sun) }
@@ -24,6 +25,8 @@ fun PlayScreen(navController: NavHostController, isShaken: MutableState<Boolean>
 
     LaunchedEffect(isShaken.value) {
         if (isShaken.value) {
+            GameController.initialize(context)
+            GameController.setPlayerName(playerName)
             val (playerImage, computerImage, winnerMessage) = GameController.playGame(isStrategicMode)
             playerImageResId = playerImage
             computerImageResId = computerImage
