@@ -11,9 +11,12 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.*
 import com.example.shifumi_mobile.wifi.WifiManager
 import com.example.shifumi_mobile.models.ShakeListener
+import com.example.shifumi_mobile.ui.GameMode
 import com.example.shifumi_mobile.ui.HomeScreen
 import com.example.shifumi_mobile.ui.PlayScreen
 import com.example.shifumi_mobile.ui.WifiScreen
+import com.example.shifumi_mobile.ui.getPlayerName
+import com.example.shifumi_mobile.ui.showScores
 
 class MainActivity : ComponentActivity() {
     private lateinit var wifiManager: WifiManager
@@ -55,11 +58,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation(isShaken: MutableState<Boolean>, wifiManager: WifiManager, context: Context) {
+//fun AppNavigation(isShaken: MutableState<Boolean>, context: Context = LocalContext.current) {
     val navController = rememberNavController()
+    var playerName by remember { mutableStateOf("") }
 
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("play") { PlayScreen(navController, isShaken) }
         composable("wifi") { WifiScreen(wifiManager) }
+        composable("getPlayerName") { getPlayerName(navController) { name -> playerName = name }}
+        composable("gameMode") { GameMode(navController, playerName) }
+        composable("PlayClassique") { PlayScreen(navController, isShaken, "PlayClassique", playerName, context) }
+        composable("PlayStrategie"){ PlayScreen(navController, isShaken, "PlayStrategie", playerName, context) }
+        composable("scores") { showScores(navController, context) }
     }
 }
